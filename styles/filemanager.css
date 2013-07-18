@@ -87,7 +87,7 @@ video, audio {
 }
 
 #preview > img {
-	margin: 25px;
+	margin: 10px 25px 25px 25px;
 	max-width: 80%;
 }
 
@@ -101,6 +101,7 @@ video, audio {
 	width: 400px;
 	margin: 10px auto;
 	overflow: auto;
+	margin-bottom: 20px;
 }
 
 #preview dl dt,
@@ -125,7 +126,8 @@ video, audio {
 #toolbar {
 	display: block;
 	clear: left;
-	margin: 50px auto;
+	margin: 10px auto;
+	margin-top: 20px;
 }
 
 button {

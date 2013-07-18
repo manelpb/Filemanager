@@ -77,7 +77,11 @@ var setDimensions = function(){
 	var newH = $(window).height() - $('#uploader').height() - bheight;	
 	$('#splitter, #filetree, #fileinfo, .vsplitbar').height(newH);
 	
-	var newW = $('#splitter').width() - 6 - $('#filetree').width();
+	var newW = $('#splitter').width() - 6;
+	
+	if(config.options.showFileTree)
+		newW = newW - $('#filetree').width();;
+	
     $('#fileinfo').width(newW);
 };
 
@@ -813,14 +817,25 @@ var getFileInfo = function(file){
 	setUploader(currentpath);
 
 	// Include the template.
-	var template = '<div id="preview"><img /><h1></h1><dl></dl></div>';
-	template += '<form id="toolbar">';
-	if(window.opener || window.tinyMCEPopup || $.urlParam('field_name')) template += '<button id="select" name="select" type="button" value="Select">' + lg.select + '</button>';
-	template += '<button id="download" name="download" type="button" value="Download">' + lg.download + '</button>';
-	if(config.options.browseOnly != true) template += '<button id="rename" name="rename" type="button" value="Rename">' + lg.rename + '</button>';
-	if(config.options.browseOnly != true) template += '<button id="delete" name="delete" type="button" value="Delete">' + lg.del + '</button>';
-	template += '<button id="parentfolder">' + lg.parentfolder + '</button>';
-	template += '</form>';
+	var template = '';
+	var previewImage = '';
+	var toolbarButtons = '';
+	
+	previewImage += '<div id="preview"><img /><h1></h1><dl></dl></div>';
+	
+	toolbarButtons += '<form id="toolbar">';
+	if(window.opener || window.tinyMCEPopup || $.urlParam('field_name')) toolbarButtons += '<button id="select" name="select" type="button" value="Select">' + lg.select + '</button>';
+	toolbarButtons += '<button id="download" name="download" type="button" value="Download">' + lg.download + '</button>';
+	if(config.options.browseOnly != true) toolbarButtons += '<button id="rename" name="rename" type="button" value="Rename">' + lg.rename + '</button>';
+	if(config.options.browseOnly != true) toolbarButtons += '<button id="delete" name="delete" type="button" value="Delete">' + lg.del + '</button>';
+	toolbarButtons += '<button id="parentfolder">' + lg.parentfolder + '</button>';
+	toolbarButtons += '</form>';
+	
+	if(config.options.positionOfToolbar == "top") {
+		template = toolbarButtons + previewImage;
+	} else {
+		template = previewImage + toolbarButtons;		
+	}
 	
 	$('#fileinfo').html(template);
 	$('#parentfolder').click(function() {getFolderInfo(currentpath);});
@@ -1103,6 +1118,10 @@ $(function(){
 		$("#filepath").val($(this).val());
 	});
 	
+	if(!config.options.allowCreateFolders) {
+		$("#newfolder").hide();
+	}
+	
 	/** load searchbox */
 	if(config.options.searchBox === true)  {
 		$.getScript("./scripts/filemanager.liveSearch.min.js");
@@ -1228,10 +1247,15 @@ $(function(){
 	setDimensions();
 	$(window).resize(setDimensions);
         
+    if(config.options.showFileTree) {
         // Provides support for adjustible columns.
-	$('#splitter').splitter({
+		$('#splitter').splitter({
 		sizeLeft: 200
-	});
+		});
+	} else {
+		$("#filetree").hide();
+	}
+	
     getDetailView(fileRoot + expandedFolder);
 });
 
